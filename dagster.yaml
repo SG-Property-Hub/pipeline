@@ -1,3 +1,17 @@
+run_launcher:
+  module: dagster_docker
+  class: DockerRunLauncher
+  config:
+    env_vars:
+      - DAGSTER_POSTGRES_USER
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
+    network: docker_example_network
+    container_kwargs:
+      volumes: # Make docker client accessible to any launched containers as well
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./etl:/opt/dagster/dagster_home/etl
+
 run_storage:
   module: dagster_postgres.run_storage
   class: PostgresRunStorage

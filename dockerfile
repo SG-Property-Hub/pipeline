@@ -3,10 +3,14 @@
 
 FROM python:3.10-slim
 
-WORKDIR /app
-ENV DAGSTER_HOME=/app
 
-COPY . /app
+# Set $DAGSTER_HOME
+WORKDIR /opt/dagster/dagster_home
+ENV DAGSTER_HOME=/opt/dagster/dagster_home
 
-# Set $DAGSTER_HOME and copy dagster instance
-RUN pip install -r /app/requirements.txt
+#copy instance
+COPY dagster.yaml workspace.yaml  $DAGSTER_HOME
+
+COPY requirements.txt $DAGSTER_HOME
+
+RUN pip install -r /opt/dagster/dagster_home/requirements.txt

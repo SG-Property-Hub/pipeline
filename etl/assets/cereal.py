@@ -5,7 +5,7 @@ from typing import List
 import requests
 from dagster import asset, get_dagster_logger
 
-from dagster_example.ops.cereal import CEREAL_URL
+from etl.ops.cereal import CEREAL_URL
 
 
 @asset

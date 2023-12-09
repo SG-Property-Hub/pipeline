@@ -2,7 +2,7 @@
 
 from dagster import schedule
 
-from dagster_example.jobs import complex_job
+from etl.jobs import complex_job
 
 
 # https://docs.dagster.io/concepts/partitions-schedules-sensors/schedules
