@@ -1,0 +1,19 @@
+---
+version: '2'
+services:
+
+
+  scrapy:
+    build:
+      context: .
+      dockerfile: Dockerfile/Dockerfile.scrapy
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - DYNAMODB_RAW_TABLE=${DYNAMODB_RAW_TABLE}
+    volumes:
+      - ./:/app
+    command: scrapy crawl mogi
+
+  
