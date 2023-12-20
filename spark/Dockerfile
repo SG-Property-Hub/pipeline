@@ -7,7 +7,7 @@ FROM python:3.9-slim-buster
 
 RUN apt-get install -y openjdk-11-jdk-headless
 RUN rm -rf /var/lib/apt/lists/*   
-
+RUN apt-get install procps
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 RUN echo $JAVA_HOME

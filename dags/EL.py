@@ -27,11 +27,11 @@ dag = DAG('spark_example', default_args=default_args,
 
 spark_task = SparkSubmitOperator(
     task_id='spark_submit_task',
-    application='/spark/jobs/test.py',  # Đường dẫn tới ứng dụng Spark của bạn
-    conn_id='129',  # ID của kết nối Spark trong Airflow
-    total_executor_cores='2',  # Số lõi executor bạn muốn sử dụng
-    executor_cores='1',  # Số lõi mỗi executor
-    executor_memory='2g',  # Bộ nhớ mỗi executor
+    application='spark/jobs/test2.py', 
+    conn_id='129',  
+    total_executor_cores='2', 
+    executor_cores='1',  
+    executor_memory='2g', 
     dag=dag,
 )
 

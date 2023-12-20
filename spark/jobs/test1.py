@@ -17,4 +17,7 @@ def run_spark_job():
     #save to parquet
     logging.info("Saving filtered dataframe to parquet")
     filtered_df.write.parquet("filtered.parquet")
+    #save  to ok.txt
+    with open("ok.txt", "w") as f:
+        f.write("ok")
     spark.stop()
