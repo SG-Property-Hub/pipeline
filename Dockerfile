@@ -1,22 +1,18 @@
-FROM apache/airflow:2.7.0
+FROM apache/airflow:2.7.1-python3.9
 
 USER root
-# RUN a2enmod rewrite
-# RUN echo "deb https://deb.debian.org/debian/ stable main" > /etc/apt/sources.list
-# RUN add-apt-repository ppa:openjdk-r/ppa
-RUN apt clean
 RUN apt-get update
-RUN apt-get install openjdk-11-jdk -y
-RUN rm -rf /var/lib/apt/lists/*   
+# RUN apt-get install -y gcc python3-dev
+RUN apt-get install -y openjdk-11-jdk
+RUN apt-get clean
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH=$PATH:$JAVA_HOME/bin
-RUN echo $JAVA_HOME
+# Set JAVA_HOME environment variable
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 
 USER airflow
-
+RUN pip install pyspark==3.2.1
+RUN pip install 
 COPY requirements.txt requirements.txt
-
 RUN pip install -r requirements.txt
+# RUNsudo chmod 777  /usr/local/bin/*
 
-RUN pip install --no-cache-dir apache-airflow-providers-apache-spark

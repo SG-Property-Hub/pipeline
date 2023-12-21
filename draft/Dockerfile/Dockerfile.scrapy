@@ -1,9 +1,0 @@
-
-FROM python:3.9-slim-buster
-
-COPY . /app/
-
-RUN pip install -r /app/property_crawler/requirements.txt
-
-WORKDIR /app
-
