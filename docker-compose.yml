@@ -60,7 +60,7 @@ services:
 
   scheduler:
     <<: *airflow-common
-    command: bash -c "airflow db migrate && airflow users create --username admin --firstname Yusuf --lastname Ganiyu --role Admin --email airscholar@gmail.com --password admin && airflow scheduler"
+    command: bash -c "airflow db migrate && airflow users create --username admin --firstname etsu --lastname etsu --role Admin --email etsu@gmail.com --password admin && airflow scheduler"
 
 networks:
   pipeline-net:

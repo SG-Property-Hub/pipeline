@@ -1,5 +1,5 @@
 export $(grep -v '^#' dev.env | xargs)
-sudo chown 50000:0 dags logs spark
+chmod -R 777 dags/ logs/ spark/
 docker-compose up --build
 
 
