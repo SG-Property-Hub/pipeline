@@ -6,7 +6,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 dag = DAG(
     dag_id = "sparking_flow",
     default_args = {
-        "owner": "etsu",
+        "owner": "Yusuf Ganiyu",
         "start_date": airflow.utils.dates.days_ago(1)
     },
     schedule_interval = "@daily"
