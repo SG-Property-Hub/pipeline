@@ -1,5 +1,5 @@
 pymongo
 boto3
-pyspark==3.2.1
+pyspark
 apache-airflow
 apache-airflow-providers-apache-spark 
