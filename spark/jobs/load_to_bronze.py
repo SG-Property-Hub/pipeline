@@ -66,6 +66,8 @@ def delete_s3_folder(s3, bucket_name, prefix):
 
 current_date = start_date
 count_total_processed = 0
+
+
 while current_date <= end_date:
     query_date = str(current_date.strftime("%Y-%m-%d")) 
     current_date += timedelta(days = 1)
@@ -78,33 +80,36 @@ while current_date <= end_date:
     print(query_date, num_documents)   
     id = 0
 
-    try:
-        delete_s3_folder(s3, bronze_bucket_name, f'{query_date}/')
-    except Exception as e:
-        print(f'Error deleting folder: {e}')
+    # try:
+    #     delete_s3_folder(s3, bronze_bucket_name, f'{query_date}/')
+    # except Exception as e:
+    #     print(f'Error deleting folder: {e}')
 
     while offset < num_documents:
+        file_name = f'part-{id}.parquet'
+        if f'{query_date}/{file_name}' in bronze_folders:
+            print(f'File already exists: {bronze_bucket_name}/{query_date}/{file_name}')
+            id = id + 1
+            offset += LIMIT
+            continue
+        
         num_this_batch = LIMIT if offset + LIMIT < num_documents else num_documents - offset
         batch_cursor = collection.find({'initial_date': query_date}, {'_id': 0}).skip(offset).limit(LIMIT)
         offset += LIMIT
         
         batch_data = list(batch_cursor)
         print('num_this_batch: ', len(batch_data))
-        file_name = f'part-{id}.parquet'
-
+        
         
         df = pd.DataFrame(batch_data)
         buffer = BytesIO()
         df.to_parquet(buffer, engine='pyarrow')
         buffer.seek(0)
   
-        if f'/{query_date}/{file_name}' in bronze_folders:
-            s3.delete_object(Bucket = bronze_bucket_name, Key = f'/{query_date}/{file_name}')
+        # s3.delete_object(Bucket = bronze_bucket_name, Key = f'/{query_date}/{file_name}')
+
         s3.upload_fileobj(buffer, bronze_bucket_name, f'/{query_date}/{file_name}')
-        
-
         print(f'Uploaded to s3: {bronze_bucket_name}/{query_date}/{file_name}')
-
         id = id + 1
 
 
