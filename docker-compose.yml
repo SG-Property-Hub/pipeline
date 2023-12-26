@@ -13,6 +13,10 @@ x-airflow-common: &airflow-common
     dockerfile: Dockerfile
   env_file:
     - airflow.env
+  environment:
+    - MONGO_URL=${MONGO_URL}
+    - MONGO_DB=${MONGO_DB}
+    - MONGO_COLLECTION=${MONGO_COLLECTION}
   volumes:
     - ./spark:/opt/airflow/spark
     - ./dags:/opt/airflow/dags

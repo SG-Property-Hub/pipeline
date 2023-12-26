@@ -3,3 +3,6 @@ boto3
 pyspark
 apache-airflow
 apache-airflow-providers-apache-spark 
+pyarrow
+s3fs
+fsspec

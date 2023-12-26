@@ -1,4 +1,4 @@
-export $(grep -v '^#' dev.env | xargs)
+export $(grep -v '^#' .env | xargs)
 chmod -R 777 dags/ logs/ spark/
 docker-compose up --build
 

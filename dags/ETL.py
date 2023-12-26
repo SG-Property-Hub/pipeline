@@ -4,9 +4,9 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 
 dag = DAG(
-    dag_id = "sparking_flow",
+    dag_id = "ETL",
     default_args = {
-        "owner": "Yusuf Ganiyu",
+        "owner": "etsu",
         "start_date": airflow.utils.dates.days_ago(1)
     },
     schedule_interval = "@daily"
@@ -18,17 +18,17 @@ start = PythonOperator(
     dag=dag
 )
 
-python_job1 = SparkSubmitOperator(
-    task_id="python_job1",
+extract_to_bronze = SparkSubmitOperator(
+    task_id="extract1",
     conn_id="spark-conn",
-    application="spark/jobs/wordcountjob.py",
+    application="spark/jobs/load_to_bronze.py",
     dag=dag
 )
 
-python_job2 = SparkSubmitOperator(
-    task_id="python_job2",
+transform_to_silver = SparkSubmitOperator(
+    task_id="transform1",
     conn_id="spark-conn",
-    application="spark/jobs/randomwordcountjob.py",
+    application="spark/jobs/transform_to_silver.py",
     dag=dag
 )
 
@@ -38,4 +38,4 @@ end = PythonOperator(
     dag=dag
 )
 
-start >> [python_job1] >> python_job2 >> end
+start >> extract_to_bronze >> transform_to_silver >> end
