@@ -29,6 +29,7 @@ transform_to_silver = SparkSubmitOperator(
     task_id="transform1",
     conn_id="spark-conn",
     application="spark/jobs/transform_to_silver.py",
+    packages="org.apache.hadoop:hadoop-aws:2.7.3",
     dag=dag
 )
 

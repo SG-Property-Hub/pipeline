@@ -156,7 +156,6 @@ def transform_data(spark_df):
     transform_price_string = udf(handle_price_string,StringType())
     spark_df =  spark_df.withColumn("price_string",transform_price_string(spark_df["price_string"]))
     
-    
     transform_property_type = udf(handle_property_type,StringType())
     spark_df = spark_df.withColumn("property_type",transform_property_type(spark_df["property_type"]))
     
@@ -249,7 +248,6 @@ def create_spark_connection():
     try:
         s_conn = SparkSession.builder \
                 .appName("MinIOExtractFile") \
-                .master("local[*]") \
                 .config("fs.s3a.endpoint", MINIO_HOST)\
                 .config("fs.s3a.access.key", MINIO_ACCESS_KEY)\
                 .config("fs.s3a.secret.key", MINIO_SECRET_KEY )\
@@ -340,7 +338,7 @@ if __name__ == "__main__":
                     .parquet(s3_dest)
                 logging.info("Data loaded to silver successfully")
             except Exception as e:
-                logging.warning(f"minIO dataframe could not be created because: {e}")
+                logging.warning(f"minIO dataframe could not be loaded because: {e}")
                 
     print("Processing end .....")
     spark_conn.stop()
