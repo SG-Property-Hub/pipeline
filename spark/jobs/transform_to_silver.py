@@ -24,6 +24,7 @@ def handle_price_string(string_test):
         #handle case non-price
         string_test = 'Thỏa thuận'
     else:
+        ex= -1
         string_test=string_test.replace(" VNĐ","").replace(" đ","")
         
         string_test=string_test.replace(".","").replace(",",".")
