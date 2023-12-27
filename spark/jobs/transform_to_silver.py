@@ -2,7 +2,7 @@ import boto3
 import os
 import logging
 from pyspark.sql import SparkSession,Row
-from pyspark.sql.types import StructType,StructField,StringType,IntegerType,FloatType,ArrayType,ShortType,LongType
+from pyspark.sql.types import StructType,StructField,StringType,IntegerType,FloatType,ArrayType,IntegerType,LongType
 from difflib import SequenceMatcher
 from pyspark.sql.functions import udf,regexp_replace
 
@@ -14,7 +14,6 @@ BRONZE_BUCKET = 'bronze'
 SILVER_BUCKET = 'silver'
 
 def handle_price_string(string_test):
-    string_test = '1,2 Tỷ'
     string_test = string_test.strip().lower().replace("\xa0","")
     if string_test.find(".") == -1 and string_test.find(",") == -1:
         return string_test
@@ -177,7 +176,7 @@ def transform_data(spark_df):
     spark_df = spark_df.withColumn("description",regexp_replace("description","\\u200d|<[^>]+>|&#[0-9]+;|\\n|\\r|-|>>|\\xa0|[0-9]+\*+|Đã sao chép|Hiện số|Xem thêm|click để xem","."))
     
 
-    
+    logging.info('Data transformed sucessfully')
     return spark_df
 
 def create_Schema():
@@ -194,9 +193,9 @@ def create_Schema():
         ]), True),
         StructField("attr", StructType([
             StructField("area", FloatType(), True),
-            StructField("bathroom", ShortType(), True),
-            StructField("bedroom", ShortType(), True),
-            StructField("built_year", ShortType(), True),
+            StructField("bathroom", IntegerType(), True),
+            StructField("bedroom", IntegerType(), True),
+            StructField("built_year", IntegerType(), True),
             StructField("certificate", StringType(), True),
             StructField("condition", StringType(), True),
             StructField("direction", StringType(), True),
@@ -208,7 +207,7 @@ def create_Schema():
             StructField("length", FloatType(), True),
             StructField("site_id", StringType(), True),
             StructField("total_area", FloatType(), True),
-            StructField("total_room", ShortType(), True),
+            StructField("total_room", IntegerType(), True),
             StructField("type_detail", StringType(), True),
             StructField("width", FloatType(), True),
         ]), True),
@@ -252,13 +251,15 @@ def create_spark_connection():
                 .config("fs.s3a.access.key", MINIO_ACCESS_KEY)\
                 .config("fs.s3a.secret.key", MINIO_SECRET_KEY )\
                 .config("spark.hadoop.fs.s3a.path.style.access", "true")\
-                .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.3")\
+                .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.2.2")\
                 .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
+                .config('spark.hadoop.fs.s3a.aws.credentials.provider', 'org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider')\
                 .config("spark.sql.parquet.enableVectorizedReader","false")\
                 .config("spark.sql.parquet.writeLegacyFormat","true")\
                 .getOrCreate()
 
         s_conn.sparkContext.setLogLevel("ERROR")
+        s_conn.conf.set("mapreduce.fileoutputcommitter.marksuccessfuljobs", "false")
         logging.info("Spark connection created successfully!")
     except Exception as e:
         logging.error(f"Couldn't create the spark session due to exception {e}")
@@ -308,9 +309,9 @@ def connect_to_minIO(spark_conn,folder_name):
         spark_df = spark_conn.read\
                     .schema(schema)\
                     .parquet(s3_path)
-        logging.info("minIO dataframe created successfully")
+        logging.info("MinIO data extracted successfully")
     except Exception as e:
-        logging.warning(f"minIO dataframe could not be created because: {e}")
+        logging.warning(f"MinIO dataframe could not be created because: {e}")
     
     return spark_df
 
@@ -336,9 +337,9 @@ if __name__ == "__main__":
                 streaming_query = transformed_df.coalesce(1).write \
                     .mode("append")\
                     .parquet(s3_dest)
-                logging.info("Data loaded to silver successfully")
+                logging.info(f"Data loaded to {folder} successfully")
             except Exception as e:
-                logging.warning(f"minIO dataframe could not be loaded because: {e}")
+                logging.warning(f"Data could not be loaded because: {e}")
                 
     print("Processing end .....")
     spark_conn.stop()
