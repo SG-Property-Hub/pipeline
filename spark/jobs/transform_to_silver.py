@@ -13,7 +13,18 @@ MINIO_HOST = os.environ.get('MINIO_HOST')
 BRONZE_BUCKET = 'bronze'
 SILVER_BUCKET = 'silver'
 
-def handle_price_string(string_test):
+def handle_price_string(string_test,price):
+    if string_test is None:
+        amount_list = ["đồng","nghìn","triệu","tỷ"]
+        for t in range(0, ex +1):
+            temp = price%1000
+            price = price//1000
+            if temp == 0:
+                continue
+            else:
+                price_str = ' '+str(int(temp))+' '+ amount_list[t] + price_str
+        return price_str[1:]
+        
     string_test = string_test.strip().lower().replace("\xa0","")
     if string_test.find(".") == -1 and string_test.find(",") == -1:
         return string_test
@@ -25,7 +36,7 @@ def handle_price_string(string_test):
         string_test = 'Thỏa thuận'
     else:
         ex= -1
-        string_test=string_test.replace(" VNĐ","").replace(" đ","")
+        string_test=string_test.replace(" VNĐ","").replace(" đ","").replace("tỉ","tỷ")
         
         string_test=string_test.replace(".","").replace(",",".")
         amount_list = ["đồng","nghìn","triệu","tỷ"]
@@ -153,8 +164,10 @@ def handle_location(location):
 
 
 def transform_data(spark_df):
+    
+    spark_df = spark_df.filter(~(spark_df['price_string'].rlike("triệu/tháng")))
     transform_price_string = udf(handle_price_string,StringType())
-    spark_df =  spark_df.withColumn("price_string",transform_price_string(spark_df["price_string"]))
+    spark_df =  spark_df.withColumn("price_string",transform_price_string(spark_df["price_string"],spark_df["price"]))
     
     transform_property_type = udf(handle_property_type,StringType())
     spark_df = spark_df.withColumn("property_type",transform_property_type(spark_df["property_type"]))
