@@ -193,7 +193,7 @@ if __name__ == "__main__":
     if args.force:
         load_to_bronze(mode = 'force')
     else:
-        load_to_bronze(mode = 'force')
-        # load_to_bronze()
+        # load_to_bronze(mode = 'force')
+        load_to_bronze()
 
 
