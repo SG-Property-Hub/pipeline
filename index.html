@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Show API Data</title>
+  <style>
+    /* CSS cho kết quả */
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div id="result"></div>
+
+  <script>
+    // JavaScript để fetch và hiển thị dữ liệu từ API
+    document.addEventListener('DOMContentLoaded', function() {
+      const resultDiv = document.getElementById('result');
+
+      fetch('http://api.recsysproject.tech/api/get_article?content_id=2480569770059008227')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Xử lý dữ liệu và hiển thị trên trang
+          const dataString = JSON.stringify(data, null, 2); // Chuyển dữ liệu sang chuỗi JSON có định dạng
+          resultDiv.textContent = dataString; // Hiển thị dữ liệu trong #result
+        })
+        .catch(error => {
+          resultDiv.textContent = 'There was a problem with the fetch operation: ' + error.message;
+        });
+    });
+  </script>
+</body>
+</html>
