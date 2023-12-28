@@ -24,19 +24,17 @@ def handle_price_string(string_test,price):
             else:
                 price_str = ' '+str(int(temp))+' '+ amount_list[t] + price_str
         return price_str[1:]
-        
     string_test = string_test.strip().lower().replace("\xa0","")
     if string_test.find(".") == -1 and string_test.find(",") == -1:
         return string_test
     elif string_test.find("/m2") != -1:
-        #handle case price per m2
         pass 
     elif string_test == 'Thương lượng' or string_test == 'Liên hệ' or string_test=='Giá thỏa thuận' :
         #handle case non-price
         string_test = 'Thỏa thuận'
     else:
         ex= -1
-        string_test=string_test.replace(" VNĐ","").replace(" đ","").replace("tỉ","tỷ")
+        string_test=string_test.replace(" VNĐ","").replace("đồng","").replace(" đ","").replace("tỉ","tỷ").replace("ngàn","nghìn")
         
         string_test=string_test.replace(".","").replace(",",".")
         amount_list = ["đồng","nghìn","triệu","tỷ"]
@@ -165,7 +163,10 @@ def handle_location(location):
 
 def transform_data(spark_df):
     
-    spark_df = spark_df.filter(~(spark_df['price_string'].rlike("triệu/tháng")))
+    spark_df = spark_df.filter(~(spark_df.price_string.rlike("Triệu/Tháng")))
+    spark_df = spark_df.filter(~(spark_df['price_string'].rlike("Tỷ/Tháng")))
+    spark_df = spark_df.filter(~(spark_df['price_string'].rlike("ngàn")))
+    
     transform_price_string = udf(handle_price_string,StringType())
     spark_df =  spark_df.withColumn("price_string",transform_price_string(spark_df["price_string"],spark_df["price"]))
     
