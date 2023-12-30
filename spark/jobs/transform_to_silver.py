@@ -350,7 +350,7 @@ if __name__ == "__main__":
             try:
                 s3_dest=f"s3a://silver/{folder}"
                 streaming_query = transformed_df.coalesce(1).write \
-                    .mode("append")\
+                    .mode("overwrite")\
                     .parquet(s3_dest)
                 logging.info(f"Data loaded to {folder} successfully")
             except Exception as e:

@@ -33,10 +33,18 @@ transform_to_silver = SparkSubmitOperator(
     dag=dag
 )
 
+load_to_gold = SparkSubmitOperator(
+    task_id="load1",
+    conn_id="spark-conn",
+    application="spark/jobs/laod_to_gold.py",
+    packages="org.apache.hadoop:hadoop-aws:3.2.2",
+    dag=dag
+)
+
 end = PythonOperator(
     task_id="end",
     python_callable = lambda: print("Jobs completed successfully"),
     dag=dag
 )
 
-start >> extract_to_bronze >> transform_to_silver >> end
+start >> extract_to_bronze >> transform_to_silver >> load_to_gold >> end
