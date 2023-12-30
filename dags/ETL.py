@@ -36,7 +36,7 @@ transform_to_silver = SparkSubmitOperator(
 load_to_gold = SparkSubmitOperator(
     task_id="load1",
     conn_id="spark-conn",
-    application="spark/jobs/laod_to_gold.py",
+    application="spark/jobs/load_to_gold.py",
     packages="org.apache.hadoop:hadoop-aws:3.2.2",
     dag=dag
 )
