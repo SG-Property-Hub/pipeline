@@ -227,7 +227,6 @@ if __name__ == "__main__":
            
             #streaming
             df_flattened = flat_dataframe(spark_df)
-            print(df_flattened.printSchema())
             try:
                 flat_dest=f"s3a://gold/{folder}/flat"
                 streaming_query = df_flattened.coalesce(1).write \
@@ -238,7 +237,6 @@ if __name__ == "__main__":
                 logging.warning(f"Data could not be loaded because: {e}")
             
             house_df = create_house_parquet(spark_df)
-            print(house_df.printSchema())
             try:
                 house_dest=f"s3a://gold/{folder}/house"
                 streaming_query = house_df.coalesce(1).write \
@@ -249,7 +247,6 @@ if __name__ == "__main__":
                 logging.warning(f"Data could not be loaded because: {e}")
             
             location_df = create_location_parquet(spark_df)
-            print(location_df.printSchema())
             try:
                 location_dest=f"s3a://gold/{folder}/location"
                 streaming_query = location_df.coalesce(1).write \
@@ -260,7 +257,6 @@ if __name__ == "__main__":
                 logging.warning(f"Data could not be loaded because: {e}")
                 
             attr_df = create_attr_parquet(spark_df)
-            print(attr_df.printSchema())
             try:
                 attr_dest=f"s3a://gold/{folder}/attr"
                 streaming_query = attr_df.coalesce(1).write \
@@ -271,7 +267,6 @@ if __name__ == "__main__":
                 logging.warning(f"Data could not be loaded because: {e}")
                 
             project_df = create_project_parquet(spark_df)
-            print(project_df.printSchema())
             try:
                 project_dest=f"s3a://gold/{folder}/project"
                 streaming_query = project_df.coalesce(1).write \
@@ -282,7 +277,6 @@ if __name__ == "__main__":
                 logging.warning(f"Data could not be loaded because: {e}")
                 
             agent_df = create_agent_parquet(spark_df)
-            print(agent_df.printSchema())
             try:
                 agent_dest=f"s3a://gold/{folder}/agent"
                 streaming_query = agent_df.coalesce(1).write \
