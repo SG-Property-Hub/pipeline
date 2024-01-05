@@ -318,7 +318,7 @@ def get_folder_not_in_silver():
 
 def connect_to_minIO(spark_conn,folder_name):
     spark_df = None
-    s3_path = f"s3a://bronze/{folder_name}"
+    s3_path = f"s3a://{BRONZE_BUCKET}/{folder_name}"
     try:
         schema = create_Schema()
         spark_df = spark_conn.read\
@@ -348,7 +348,7 @@ if __name__ == "__main__":
             transformed_df = transform_data(spark_df)
             #streaming
             try:
-                s3_dest=f"s3a://silver/{folder}"
+                s3_dest=f"s3a://{SILVER_BUCKET}/{folder}"
                 streaming_query = transformed_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(s3_dest)

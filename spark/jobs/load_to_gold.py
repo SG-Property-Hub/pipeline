@@ -194,7 +194,7 @@ def get_folder_not_in_gold():
 
 def connect_to_minIO(spark_conn,folder_name):
     spark_df = None
-    s3_path = f"s3a://bronze/{folder_name}"
+    s3_path = f"s3a://{SILVER_BUCKET}/{folder_name}"
     try:
         schema = create_Schema()
         spark_df = spark_conn.read\
@@ -228,7 +228,7 @@ if __name__ == "__main__":
             #streaming
             df_flattened = flat_dataframe(spark_df)
             try:
-                flat_dest=f"s3a://gold/{folder}/flat"
+                flat_dest=f"s3a://{GOLD_BUCKET}/{folder}/flat"
                 streaming_query = df_flattened.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(flat_dest)
@@ -238,7 +238,7 @@ if __name__ == "__main__":
             
             house_df = create_house_parquet(spark_df)
             try:
-                house_dest=f"s3a://gold/{folder}/house"
+                house_dest=f"s3a://{GOLD_BUCKET}/{folder}/house"
                 streaming_query = house_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(house_dest)
@@ -248,7 +248,7 @@ if __name__ == "__main__":
             
             location_df = create_location_parquet(spark_df)
             try:
-                location_dest=f"s3a://gold/{folder}/location"
+                location_dest=f"s3a://{GOLD_BUCKET}/{folder}/location"
                 streaming_query = location_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(location_dest)
@@ -258,7 +258,7 @@ if __name__ == "__main__":
                 
             attr_df = create_attr_parquet(spark_df)
             try:
-                attr_dest=f"s3a://gold/{folder}/attr"
+                attr_dest=f"s3a://{GOLD_BUCKET}/{folder}/attr"
                 streaming_query = attr_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(attr_dest)
@@ -268,7 +268,7 @@ if __name__ == "__main__":
                 
             project_df = create_project_parquet(spark_df)
             try:
-                project_dest=f"s3a://gold/{folder}/project"
+                project_dest=f"s3a://{GOLD_BUCKET}/{folder}/project"
                 streaming_query = project_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(project_dest)
@@ -278,7 +278,7 @@ if __name__ == "__main__":
                 
             agent_df = create_agent_parquet(spark_df)
             try:
-                agent_dest=f"s3a://gold/{folder}/agent"
+                agent_dest=f"s3a://{GOLD_BUCKET}/{folder}/agent"
                 streaming_query = agent_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(agent_dest)
