@@ -42,7 +42,7 @@ load_to_gold = SparkSubmitOperator(
 )
 
 load_to_postgre=SparkSubmitOperator(
-    task_id="load1",
+    task_id="load2",
     conn_id="spark-conn",
     application="spark/jobs/load_to_postgre.py",
     packages="org.apache.hadoop:hadoop-aws:3.2.2,org.postgresql:postgresql:42.2.6",
@@ -55,4 +55,4 @@ end = PythonOperator(
     dag=dag
 )
 
-start >> extract_to_bronze >> transform_to_silver >> load_to_gold >> end
+start >> extract_to_bronze >> transform_to_silver >> load_to_gold >> load_to_postgre >> end
