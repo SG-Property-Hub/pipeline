@@ -41,6 +41,14 @@ load_to_gold = SparkSubmitOperator(
     dag=dag
 )
 
+load_to_postgre=SparkSubmitOperator(
+    task_id="load1",
+    conn_id="spark-conn",
+    application="spark/jobs/load_to_postgre.py",
+    packages="org.apache.hadoop:hadoop-aws:3.2.2,org.postgresql:postgresql:42.2.6",
+    dag=dag
+)
+
 end = PythonOperator(
     task_id="end",
     python_callable = lambda: print("Jobs completed successfully"),

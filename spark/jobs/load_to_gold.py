@@ -1,9 +1,7 @@
 import boto3
 import os
-import logging
-from pyspark.sql import SparkSession,Row
+from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType,StructField,StringType,IntegerType,FloatType,ArrayType,IntegerType,LongType
-from difflib import SequenceMatcher
 from pyspark.sql.functions import udf
 
 MINIO_ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
@@ -152,9 +150,9 @@ def create_spark_connection():
 
         s_conn.sparkContext.setLogLevel("ERROR")
         s_conn.conf.set("mapreduce.fileoutputcommitter.marksuccessfuljobs", "false")
-        logging.info("Spark connection created successfully!")
+        print("Spark connection created successfully!")
     except Exception as e:
-        logging.error(f"Couldn't create the spark session due to exception {e}")
+        print(f"Couldn't create the spark session due to exception {e}")
 
     return s_conn
 
@@ -181,7 +179,7 @@ def create_s3_connection():
     except:
         s3.create_bucket(Bucket=GOLD_BUCKET)
         
-    logging.info("S3 connection created successfully!")
+    print("S3 connection created successfully!")
     return s3
 
 def get_folder_not_in_gold():
@@ -201,9 +199,9 @@ def connect_to_minIO(spark_conn,folder_name):
         spark_df = spark_conn.read\
                     .schema(schema)\
                     .parquet(s3_path)
-        logging.info("MinIO data extracted successfully")
+        print("MinIO data extracted successfully")
     except Exception as e:
-        logging.warning(f"MinIO dataframe could not be created because: {e}")
+        print(f"MinIO dataframe could not be created because: {e}")
     
     return spark_df
 
@@ -233,9 +231,9 @@ if __name__ == "__main__":
                 streaming_query = df_flattened.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(flat_dest)
-                logging.info(f"Data loaded to {folder}/flat successfully")
+                print(f"Data loaded to {folder}/flat successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
             
             house_df = create_house_parquet(spark_df)
             try:
@@ -243,9 +241,9 @@ if __name__ == "__main__":
                 streaming_query = house_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(house_dest)
-                logging.info(f"Data loaded to {folder}/house successfully")
+                print(f"Data loaded to {folder}/house successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
             
             location_df = create_location_parquet(spark_df)
             try:
@@ -253,9 +251,9 @@ if __name__ == "__main__":
                 streaming_query = location_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(location_dest)
-                logging.info(f"Data loaded to {folder}/location successfully")
+                print(f"Data loaded to {folder}/location successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
                 
             attr_df = create_attr_parquet(spark_df)
             try:
@@ -263,9 +261,9 @@ if __name__ == "__main__":
                 streaming_query = attr_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(attr_dest)
-                logging.info(f"Data loaded to {folder}/attr successfully")
+                print(f"Data loaded to {folder}/attr successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
                 
             project_df = create_project_parquet(spark_df)
             try:
@@ -273,9 +271,9 @@ if __name__ == "__main__":
                 streaming_query = project_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(project_dest)
-                logging.info(f"Data loaded to {folder}/project successfully")
+                print(f"Data loaded to {folder}/project successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
                 
             agent_df = create_agent_parquet(spark_df)
             try:
@@ -283,9 +281,9 @@ if __name__ == "__main__":
                 streaming_query = agent_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(agent_dest)
-                logging.info(f"Data loaded to {folder}/agent successfully")
+                print(f"Data loaded to {folder}/agent successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
 
 
                 

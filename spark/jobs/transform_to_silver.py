@@ -1,6 +1,5 @@
 import boto3
 import os
-import logging
 from pyspark.sql import SparkSession,Row
 from pyspark.sql.types import StructType,StructField,StringType,IntegerType,FloatType,ArrayType,IntegerType,LongType
 from difflib import SequenceMatcher
