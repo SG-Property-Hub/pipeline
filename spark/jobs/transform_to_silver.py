@@ -14,45 +14,24 @@ BRONZE_BUCKET = 'bronze'
 SILVER_BUCKET = 'silver'
 
 def handle_price_string(string_test,price):
-    if string_test is None:
-        amount_list = ["đồng","nghìn","triệu","tỷ"]
-        for t in range(0, ex +1):
-            temp = price%1000
-            price = price//1000
-            if temp == 0:
-                continue
-            else:
-                price_str = ' '+str(int(temp))+' '+ amount_list[t] + price_str
-        return price_str[1:]
     string_test = string_test.strip().lower().replace("\xa0","")
-    if string_test.find(".") == -1 and string_test.find(",") == -1:
-        return string_test
-    elif string_test.find("/m2") != -1:
-        pass 
-    elif string_test == 'Thương lượng' or string_test == 'Liên hệ' or string_test=='Giá thỏa thuận' :
-        #handle case non-price
+    if string_test.find("/m2") != -1:
+        return string_test.replace("VNĐ","")
+    elif string_test == 'thương lượng' or string_test == 'liên hệ' or string_test=='giá thỏa thuận' or string_test == 'thỏa thuận':
         string_test = 'Thỏa thuận'
+        return string_test
     else:
-        ex= -1
-        string_test=string_test.replace(" VNĐ","").replace("đồng","").replace(" đ","").replace("tỉ","tỷ").replace("ngàn","nghìn")
-        
-        string_test=string_test.replace(".","").replace(",",".")
         amount_list = ["đồng","nghìn","triệu","tỷ"]
-        try:
-            list_string = string_test.split(" ") 
-            price = int(list_string[0])
-        except:
-            num = float(list_string[0])
-            ex =amount_list.index(list_string[1])
-            price = num * (1000**ex)
         price_str =''
-        for t in range(0, ex +1):
+        for t in range(0, 4):
             temp = price%1000
             price = price//1000
             if temp == 0:
                 continue
             else:
                 price_str = ' '+str(int(temp))+' '+ amount_list[t] + price_str
+            if amount_list[t] == 'tỷ' and price%1000 != 0: 
+                t =0
         return price_str[1:]
 
 def handle_property_type(test_type):
@@ -87,27 +66,36 @@ def handle_property_type(test_type):
         return 'orther'
 
 def handle_location(location):
+    global city_mapping
     city = location.city
-    city_list = ['Thành phố Hồ Chí Minh', 'Thành phố Hà Nội', 'Thành phố Đà Nẵng', 'Tỉnh Bình Dương', 'Tỉnh An Giang', 'Tỉnh Bà Rịa Vũng Tàu', 
-             'Tỉnh Bạc Liêu', 'Tỉnh Bắc Giang', 'Tỉnh Bắc Kạn', 'Tỉnh Bắc Ninh', 'Tỉnh Bến Tre', 'Tỉnh Bình Định', 'Tỉnh Bình Phước', 'Tỉnh Bình Thuận', 
-             'Tỉnh Cà Mau', 'Tỉnh Cao Bằng', 'Thành phố Cần Thơ', 'Tỉnh Đắk Lắk', 'Tỉnh Đắk Nông', 'Tỉnh Điện Biên', 'Tỉnh Đồng Nai', 'Tỉnh Đồng Tháp', 
-             'Tỉnh Gia Lai', 'Tỉnh Hà Giang', 'Tỉnh Hà Nam', 'Tỉnh Hà Tĩnh', 'Tỉnh Hải Dương', 'Thành phố Hải Phòng', 'Tỉnh Hậu Giang', 'Tỉnh Hòa Bình', 
-             'Tỉnh Hưng Yên', 'Tỉnh Kiên Giang', 'Tỉnh Kon Tum', 'Tỉnh Khánh Hòa', 'Tỉnh Lai Châu', 'Tỉnh Lạng Sơn', 'Tỉnh Lào Cai', 'Tỉnh Lâm Đồng', 'Tỉnh Long An', 
-             'Tỉnh Nam Định', 'Tỉnh Ninh Bình', 'Tỉnh Ninh Thuận', 'Tỉnh Nghệ An', 'Tỉnh Phú Thọ', 'Tỉnh Phú Yên', 'Tỉnh Quảng Bình', 'Tỉnh Quảng Nam', 'Tỉnh Quảng Ninh',
-             'Tỉnh Quảng Ngãi', 'Tỉnh Quảng Trị', 'Tỉnh Sóc Trăng', 'Tỉnh Sơn La', 'Tỉnh Tây Ninh', 'Tỉnh Tiền Giang', 'Tỉnh Tuyên Quang', 'Tỉnh Thái Bình',
-             'Tỉnh Thái Nguyên', 'Tỉnh Thanh Hóa', 'Tỉnh Thừa Thiên Huế', 'Tỉnh Trà Vinh', 'Tỉnh Vĩnh Long', 'Tỉnh Vĩnh Phúc', 'Tỉnh Yên Bái']
+    city_list = ['Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Bình Dương', 'An Giang', 'Bà Rịa Vũng Tàu', 
+             'Bạc Liêu', 'Bắc Giang', 'Bắc Kạn', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Phước', 'Bình Thuận', 
+             'Cà Mau', 'Cao Bằng', 'Cần Thơ', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 
+             'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hải Phòng', 'Hậu Giang', 'Hòa Bình', 
+             'Hưng Yên', 'Kiên Giang', 'Kon Tum', 'Khánh Hòa', 'Lai Châu', 'Lạng Sơn', 'Lào Cai', 'Lâm Đồng', 'Long An', 
+             'Nam Định', 'Ninh Bình', 'Ninh Thuận', 'Nghệ An', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ninh',
+             'Quảng Ngãi', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Tiền Giang', 'Tuyên Quang', 'Thái Bình',
+             'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Trà Vinh', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái']
 
     max_ratio = 0
     city_similar = ''
-    for city in city_list:
-        similarity_ratio = SequenceMatcher(None,city, city).ratio()
-        if similarity_ratio >0.8:
-            max_ratio = similarity_ratio
-            city_similar = city
-            break
-        if max_ratio < similarity_ratio :
-            max_ratio = similarity_ratio
-            city_similar = city
+    if city in city_mapping:
+        city_similar = city_mapping[city]
+    else:
+        for city1 in city_list:
+            similarity_ratio = SequenceMatcher(None,city, city1).ratio()
+            if similarity_ratio >0.8:
+                max_ratio = similarity_ratio
+                city_similar = city1
+                break
+            if max_ratio < similarity_ratio :
+                max_ratio = similarity_ratio
+                city_similar = city1
+        if city_similar not in ['Hà Nội','Hồ Chí Minh','Đà Nẵng','Cần Thơ','Hải Phòng']:
+            city_similar = 'Tỉnh ' +city_similar
+        else:
+            city_similar = 'Thành phố ' +city_similar
+        city_mapping[city]= city_similar
     
     dist = location.dist
     ward = location.ward
@@ -116,11 +104,11 @@ def handle_location(location):
     dist = dist.strip()
     
     if dist.find("Tp.") != -1:
-        dist=dist.replace("Tp.","Thành phố ")
-        address = address.replace("Tp.","Thành phố ")
-    elif dist.find("TP.") != -1:
-        dist=dist.replace("TP.","Thành phố ")
-        address = address.replace("TP.","Thành phố ")
+        dist=dist.replace("Tp.","")
+        address = address.replace("Tp.","")
+    elif dist.find("TP.") != -1:    
+        dist=dist.replace("TP.","")
+        address = address.replace("TP.","")
     elif dist.find("Tx.") != -1:
         dist=dist.replace("Tx.","Thị xã ")
         address = address.replace("Tx.","Thị xã")
@@ -130,6 +118,8 @@ def handle_location(location):
     elif dist.find("H.") != -1:
         dist=dist.replace("H.","Huyện ")
         address = address.replace("H.","Huyện ")
+    elif dist.find(".") != -1:
+        dist = dist.replace(".","")
     
     if ward is not None:
         ward = ward.strip()   
@@ -139,15 +129,27 @@ def handle_location(location):
         elif ward.find("X.") != -1:
             ward=ward.replace("X.","Xã ")
             address = address.replace("X.","Xã ")
+        elif ward.find(".") != -1:
+            ward = ward.replace(".","")    
     
     if street is not None:
         street = street.strip()
         if street.find("Đ.") != -1:
             street = street.replace("Đ.","Đường ")
             address = address.replace("Đ.","Đường ")
-    
+        elif street.find("đ.")!= -1:
+            street = street.replace("đ.","Đường ")
+            address = address.replace("đ.","Đường ")
+        elif street.find(".") != -1:
+            street = street.replace(".","")
+            
     if address is not None :    
         address = address.strip()
+        if address.find("đ.")!= -1:
+            address = address.replace("đ.","Đường ")
+        if address.find(".")!= -1:
+            address = address.replace(".","")
+
     updated_location =Row(
         address = address,
         city = city_similar,
@@ -163,7 +165,7 @@ def handle_location(location):
 
 def transform_data(spark_df):
     
-    spark_df = spark_df.filter(~(spark_df.price_string.rlike("Triệu/Tháng")))
+    spark_df = spark_df.filter(~(spark_df['price_string'].rlike("Triệu/Tháng")))
     spark_df = spark_df.filter(~(spark_df['price_string'].rlike("Tỷ/Tháng")))
     spark_df = spark_df.filter(~(spark_df['price_string'].rlike("ngàn")))
     

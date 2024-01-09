@@ -4,7 +4,7 @@ import logging
 from pyspark.sql import SparkSession,Row
 from pyspark.sql.types import StructType,StructField,StringType,IntegerType,FloatType,ArrayType,IntegerType,LongType
 from difflib import SequenceMatcher
-from pyspark.sql.functions import udf,regexp_replace,concat_ws,collect_list
+from pyspark.sql.functions import udf
 
 MINIO_ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
 MINIO_SECRET_KEY = os.environ.get('MINIO_SECRET_KEY')
@@ -18,7 +18,8 @@ def convert_images_to_string(list_img):
         img_string ='['
         for img in list_img:
             img_string=img_string + img+','
-        img_string= img_string[:-1]+']'
+        if len(img_string) > 1:
+            img_string= img_string[:-1]+']'
         return img_string
     else:
         return None
