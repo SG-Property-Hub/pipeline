@@ -125,7 +125,7 @@ def create_s3_connection():
     
     #checking bronze bucket is exist or not
     try:
-        s3.head_bucket(Bucket={GOLD_BUCKET})
+        s3.head_bucket(Bucket=GOLD_BUCKET)
     except:
         raise Exception("Gold bucket not exist")
         
