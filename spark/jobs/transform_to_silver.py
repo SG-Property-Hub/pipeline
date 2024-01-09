@@ -13,10 +13,12 @@ MINIO_HOST = os.environ.get('MINIO_HOST')
 BRONZE_BUCKET = 'bronze'
 SILVER_BUCKET = 'silver'
 
+city_mapping = {}
+
 def handle_price_string(string_test,price):
     string_test = string_test.strip().lower().replace("\xa0","")
     if string_test.find("/m2") != -1:
-        return string_test.replace("VNĐ","")
+        return string_test.replace(" vnđ","")
     elif string_test == 'thương lượng' or string_test == 'liên hệ' or string_test=='giá thỏa thuận' or string_test == 'thỏa thuận':
         string_test = 'Thỏa thuận'
         return string_test
@@ -193,7 +195,7 @@ def transform_data(spark_df):
     spark_df = spark_df.withColumn("description",regexp_replace("description","\\u200d|<[^>]+>|&#[0-9]+;|\\n|\\r|-|>>|\\xa0|[0-9]+\*+|Đã sao chép|Hiện số|Xem thêm|click để xem","."))
     
 
-    logging.info('Data transformed sucessfully')
+    print('Data transformed sucessfully')
     return spark_df
 
 def create_Schema():
@@ -277,9 +279,9 @@ def create_spark_connection():
 
         s_conn.sparkContext.setLogLevel("ERROR")
         s_conn.conf.set("mapreduce.fileoutputcommitter.marksuccessfuljobs", "false")
-        logging.info("Spark connection created successfully!")
+        print("Spark connection created successfully!")
     except Exception as e:
-        logging.error(f"Couldn't create the spark session due to exception {e}")
+        print(f"Couldn't create the spark session due to exception {e}")
 
     return s_conn
 
@@ -306,7 +308,7 @@ def create_s3_connection():
     except:
         s3.create_bucket(Bucket=SILVER_BUCKET)
         
-    logging.info("S3 connection created successfully!")
+    print("S3 connection created successfully!")
     return s3
 
 def get_folder_not_in_silver():
@@ -326,9 +328,9 @@ def connect_to_minIO(spark_conn,folder_name):
         spark_df = spark_conn.read\
                     .schema(schema)\
                     .parquet(s3_path)
-        logging.info("MinIO data extracted successfully")
+        print(f"MinIO data extracted folder {folder_name} successfully")
     except Exception as e:
-        logging.warning(f"MinIO dataframe could not be created because: {e}")
+        print(f"MinIO dataframe could not be created because: {e}")
     
     return spark_df
 
@@ -354,9 +356,9 @@ if __name__ == "__main__":
                 streaming_query = transformed_df.coalesce(1).write \
                     .mode("overwrite")\
                     .parquet(s3_dest)
-                logging.info(f"Data loaded to {folder} successfully")
+                print(f"Data loaded to {folder} successfully")
             except Exception as e:
-                logging.warning(f"Data could not be loaded because: {e}")
+                print(f"Data could not be loaded because: {e}")
                 
     print("Processing end .....")
     spark_conn.stop()
