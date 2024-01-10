@@ -15,7 +15,7 @@ GOLD_BUCKET = 'gold'
 jdbc =  os.environ.get('POSTGRE_JDBC')
 user =  os.environ.get('POSTGRE_USER')
 password =  os.environ.get('POSTGRE_PASSWORD')
-table = os.environ.get('POSTGRE_DBNAME')
+table = os.environ.get('POSTGRE_TABLE')
 url = os.environ.get('POSTGRE_URL')
 
 create_table_sql = '''
