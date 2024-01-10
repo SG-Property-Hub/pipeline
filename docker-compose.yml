@@ -17,6 +17,12 @@ x-airflow-common: &airflow-common
     - MONGO_URL=${MONGO_URL}
     - MONGO_DB=${MONGO_DB}
     - MONGO_COLLECTION=${MONGO_COLLECTION}
+    - POSTGRE_JDBC=${POSTGRE_JDBC}
+    - POSTGRE_HOST=${POSTGRE_HOST}
+    - POSTGRE_DBNAME=${POSTGRE_DBNAME}
+    - POSTGRE_TABLE=${POSTGRE_TABLE}
+    - POSTGRE_USER=${POSTGRE_USER}
+    - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
   volumes:
     - ./spark:/opt/airflow/spark
     - ./dags:/opt/airflow/dags
