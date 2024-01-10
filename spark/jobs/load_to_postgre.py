@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS property (
     agent_email VARCHAR,
     agent_name VARCHAR,
     agent_phone_number VARCHAR,
-    agent_profile VARCHAR,
+    agent_profile VARCHAR, 
     attr_area FLOAT,
     attr_bathroom INTEGER,
     attr_bedroom INTEGER,
@@ -86,7 +86,12 @@ def create_postgre_connection():
     return postgre_conn
 
 def create_table_postgre():
-    conn = psycopg2.connect(url)
+    conn = psycopg2.connect(
+            host="103.98.150.254",
+            database="rs",
+            user="rs883366",
+            password="rs883366"
+    )
     cursor = conn.cursor()
     try:
     # Execute the SQL statement
@@ -139,12 +144,17 @@ def get_folder_not_in_gold():
     return list(gold_folder_names)
 
 def check_date_not_in_postgres(folder_names):
-    conn = psycopg2.connect(url)
+    conn = psycopg2.connect(
+    host="103.98.150.254",
+    database="rs",
+    user="rs883366",
+    password="rs883366"
+    )
     cursor = conn.cursor() 
     checked_date = []
     for folder in folder_names:
         date = folder.split("/")[0]
-        cursor.execute(f"select count(*) from test1 where initial_date = '{date}' ")
+        cursor.execute(f"select count(*) from {table} where initial_date = '{date}' ")
         num = cursor.fetchall()[0][0]
         if num == 0:
             checked_date.append(folder)
