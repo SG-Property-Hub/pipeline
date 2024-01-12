@@ -436,12 +436,12 @@ if __name__ == "__main__":
     s3 = create_s3_connection()
     print("Processing start .....")
     if spark_conn is not None:
+        create_table_postgre()
         folder_names = get_folder_not_in_gold()
         folder_names = check_date_not_in_postgres(folder_names)
         print(folder_names)
         folder_names = ['2023-11-04/']
         if len(folder_names) != 0:
-            create_table_postgre()
             for folder in folder_names:
                 print(f"=================================={folder}========================================")
                 try:
