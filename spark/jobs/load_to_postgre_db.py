@@ -157,7 +157,7 @@ def create_agent_schema():
     schema = StructType([
         StructField("id", StringType(), True),
         StructField("address", StringType(), True),
-        StructField("type", StringType(), True),
+        StructField("agent_type", StringType(), True),
         StructField("email", StringType(), True),
         StructField("name", StringType(), True),
         StructField("phone_number", StringType(), True),
