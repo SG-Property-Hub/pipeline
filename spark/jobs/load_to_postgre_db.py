@@ -17,6 +17,7 @@ dbname = os.environ.get('POSTGRE_DBNAME')
 user =  os.environ.get('POSTGRE_USER')
 password =  os.environ.get('POSTGRE_PASSWORD')
 table = os.environ.get('POSTGRE_TABLE')
+port = os.environ.get('POSTGRE_PORT')
 
 create_house_table = '''
 CREATE TABLE IF NOT EXISTS house (
@@ -177,6 +178,7 @@ def create_project_schema():
 def create_table_postgre():
     conn = psycopg2.connect(
             host=host,
+            port=port,    
             database=dbname,
             user=user,
             password=password
@@ -330,6 +332,7 @@ def create_s3_connection():
 def check_date_not_in_postgres(folder_names):
     conn = psycopg2.connect(
             host=host,
+            port=port,
             database=dbname,
             user=user,
             password=password

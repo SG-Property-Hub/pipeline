@@ -13,10 +13,12 @@ SILVER_BUCKET = 'silver'
 GOLD_BUCKET = 'gold'
 
 jdbc =  os.environ.get('POSTGRE_JDBC')
+host =  os.environ.get('POSTGRE_HOST')
+dbname = os.environ.get('POSTGRE_DBNAME')
 user =  os.environ.get('POSTGRE_USER')
 password =  os.environ.get('POSTGRE_PASSWORD')
 table = os.environ.get('POSTGRE_TABLE')
-url = os.environ.get('POSTGRE_URL')
+port = os.environ.get('POSTGRE_PORT')
 
 create_table_sql = '''
 CREATE TABLE IF NOT EXISTS property (
@@ -79,7 +81,7 @@ def create_postgre_connection():
                         .config("spark.jars.packages", "org.postgresql:postgresql:42.2.6") \
                         .appName("PySpark_Postgres")\
                         .getOrCreate()
-        print("Spark connection created successfully!")
+        print("Postgres connection created successfully!")
     except Exception as e:
         print(f"Couldn't create the spark session due to exception {e}")
         
@@ -87,10 +89,11 @@ def create_postgre_connection():
 
 def create_table_postgre():
     conn = psycopg2.connect(
-            host="103.98.150.254",
-            database="rs",
-            user="rs883366",
-            password="rs883366"
+            host=host,
+            port=port,
+            database=dbname,
+            user=user,
+            password=password
     )
     cursor = conn.cursor()
     try:
@@ -145,10 +148,11 @@ def get_folder_not_in_gold():
 
 def check_date_not_in_postgres(folder_names):
     conn = psycopg2.connect(
-    host="103.98.150.254",
-    database="rs",
-    user="rs883366",
-    password="rs883366"
+            host=host,
+            port=port,
+            database=dbname,
+            user=user,
+            password=password
     )
     cursor = conn.cursor() 
     checked_date = []
@@ -263,11 +267,11 @@ if __name__ == "__main__":
     s3 = create_s3_connection()
     print("Processing start .....")
     if spark_conn is not None:
+        create_table_postgre()
         schema = create_Schema()
         folder_names = get_folder_not_in_gold()
         folder_names = check_date_not_in_postgres(folder_names)
         if len(folder_names) != 0:
-            create_table_postgre()
             for folder in folder_names:
                 try:
                     spark_df = connect_to_minIO(spark_conn,folder)
