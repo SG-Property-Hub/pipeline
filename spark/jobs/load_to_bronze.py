@@ -120,14 +120,16 @@ def create_mongo_connection():
 
 
 print('Starting load to bronze job')
-print('---------------------------------------------------------------')
+
 def load_to_bronze(mode = 'normal'):
     count_total_processed = 0
     count_total_uploaded = 0
     collection = create_mongo_connection()
     s3 = create_s3_connection()
     bronze_folders = get_filenames_in_s3_bucket(s3)
-
+    END_DATE = datetime.now()
+    print(f'START_DATE = {START_DATE.strftime("%Y-%m-%d")} -------- END_DATE = {END_DATE.strftime("%Y-%m-%d")}')
+    print('---------------------------------------------------------------')
     current_date = START_DATE
     while current_date <= END_DATE:
         query_date = str(current_date.strftime("%Y-%m-%d")) 
